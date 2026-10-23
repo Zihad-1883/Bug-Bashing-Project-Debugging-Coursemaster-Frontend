@@ -241,31 +241,36 @@ export default function ManageUsers() {
                                                 <td>{new Date(userItem.createdAt).toLocaleDateString()}</td>
                                                 <td>
                                                     <div className="flex justify-center">
-                                                        <div className={`dropdown dropdown-end ${showMenu ? "dropdown-open" : ""}`}>
-                                                            <button
-                                                                type="button"
-                                                                tabIndex={0}
-                                                                className="btn btn-sm btn-ghost"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    e.preventDefault();
-                                                                    setShowActions(showMenu ? null : userItem._id);
-                                                                }}
-                                                                disabled={isLoading}
-                                                            >
-                                                                {isLoading ? (
-                                                                    <span className="loading loading-spinner loading-xs"></span>
-                                                                ) : (
-                                                                    <MoreVertical className="w-4 h-4" />
-                                                                )}
-                                                            </button>
-                                                            <ul
-                                                                tabIndex={0}
-                                                                className="dropdown-content menu bg-base-100 rounded-box z-[100] w-52 p-2 shadow-xl border-2 border-base-300"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                }}
-                                                            >
+                                                        {isSelf ? (
+                                                            <span className="badge badge-neutral badge-sm font-semibold text-xs">
+                                                                You
+                                                            </span>
+                                                        ) : (
+                                                            <div className={`dropdown dropdown-end ${showMenu ? "dropdown-open" : ""}`}>
+                                                                <button
+                                                                    type="button"
+                                                                    tabIndex={0}
+                                                                    className="btn btn-sm btn-ghost"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        e.preventDefault();
+                                                                        setShowActions(showMenu ? null : userItem._id);
+                                                                    }}
+                                                                    disabled={isLoading}
+                                                                >
+                                                                    {isLoading ? (
+                                                                        <span className="loading loading-spinner loading-xs"></span>
+                                                                    ) : (
+                                                                        <MoreVertical className="w-4 h-4" />
+                                                                    )}
+                                                                </button>
+                                                                <ul
+                                                                    tabIndex={0}
+                                                                    className="dropdown-content menu bg-base-100 rounded-box z-[100] w-52 p-2 shadow-xl border-2 border-base-300"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                    }}
+                                                                >
                                                                     {/* Make Admin/Student */}
                                                                     {userItem.role === "admin" ? (
                                                                         <li>
@@ -275,9 +280,7 @@ export default function ManageUsers() {
                                                                                     e.stopPropagation();
                                                                                     handleMakeStudent(userItem._id, userItem.name);
                                                                                 }}
-                                                                                disabled={isSelf || isLoading}
-                                                                                className={isSelf ? "opacity-50 cursor-not-allowed" : ""}
-                                                                                title={isSelf ? "Cannot change your own role" : ""}
+                                                                                disabled={isLoading}
                                                                             >
                                                                                 <ShieldOff className="w-4 h-4" />
                                                                                 Make Student
@@ -291,9 +294,7 @@ export default function ManageUsers() {
                                                                                     e.stopPropagation();
                                                                                     handleMakeAdmin(userItem._id, userItem.name);
                                                                                 }}
-                                                                                disabled={isSelf || isLoading}
-                                                                                className={isSelf ? "opacity-50 cursor-not-allowed" : ""}
-                                                                                title={isSelf ? "Cannot change your own role" : ""}
+                                                                                disabled={isLoading}
                                                                             >
                                                                                 <Shield className="w-4 h-4" />
                                                                                 Make Admin
@@ -309,9 +310,7 @@ export default function ManageUsers() {
                                                                                 e.stopPropagation();
                                                                                 handleBan(userItem._id, userItem.name, userItem.isBanned);
                                                                             }}
-                                                                            disabled={isSelf || isLoading}
-                                                                            className={isSelf ? "opacity-50 cursor-not-allowed" : ""}
-                                                                            title={isSelf ? "Cannot ban yourself" : ""}
+                                                                            disabled={isLoading}
                                                                         >
                                                                             {userItem.isBanned ? (
                                                                                 <>
@@ -337,16 +336,16 @@ export default function ManageUsers() {
                                                                                 e.stopPropagation();
                                                                                 handleDelete(userItem._id, userItem.name);
                                                                             }}
-                                                                            disabled={isSelf || isLoading}
-                                                                            className={`text-error ${isSelf ? "opacity-50 cursor-not-allowed" : ""}`}
-                                                                            title={isSelf ? "Cannot delete yourself" : ""}
+                                                                            disabled={isLoading}
+                                                                            className="text-error"
                                                                         >
                                                                             <Trash2 className="w-4 h-4" />
                                                                             Delete User
                                                                         </button>
                                                                     </li>
                                                                 </ul>
-                                                        </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>

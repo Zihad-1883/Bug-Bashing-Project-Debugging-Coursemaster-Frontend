@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCourses, fetchCourseById } from "../../../store/slices/coursesSlice";
+import { fetchCourses } from "../../../store/slices/coursesSlice";
 import { updateCourseAsync } from "../../../store/slices/adminSlice";
 import { Link } from "react-router-dom";
 import { Video, Calendar, ExternalLink, Clock, Play, X, Monitor } from "lucide-react";
@@ -26,8 +26,8 @@ export default function VideoClasses() {
                     if (module.lessons && module.lessons.length > 0) {
                         module.lessons.forEach((lesson) => {
                             if (lesson.liveClassLink) {
-                                const liveClassDate = lesson.liveClassDate 
-                                    ? new Date(lesson.liveClassDate) 
+                                const liveClassDate = lesson.liveClassDate
+                                    ? new Date(lesson.liveClassDate)
                                     : null;
                                 const isUpcoming = liveClassDate && liveClassDate > new Date();
                                 const isPast = liveClassDate && liveClassDate < new Date();
@@ -95,7 +95,7 @@ export default function VideoClasses() {
     const handleZoom = async () => {
         // Open Zoom in new tab
         openZoom();
-        
+
         if (selectedClass) {
             // Prompt user to paste the meeting link
             const zoomLink = prompt(
@@ -106,7 +106,7 @@ export default function VideoClasses() {
                 "Or click Cancel to add it manually later.",
                 ""
             );
-            
+
             if (zoomLink && zoomLink.trim()) {
                 try {
                     // Find the course
@@ -138,7 +138,7 @@ export default function VideoClasses() {
                     })).unwrap();
 
                     alert("✅ Zoom meeting link saved successfully!");
-                    
+
                     // Refresh courses
                     dispatch(fetchCourses({ page: 1, limit: 100 }));
                 } catch (err) {
@@ -150,7 +150,7 @@ export default function VideoClasses() {
             // No class selected - just open Zoom
             alert("Zoom meeting page opened in a new tab. Copy the meeting link and add it to a course lesson in the course edit page.");
         }
-        
+
         setShowStartClassModal(false);
     };
 
@@ -158,7 +158,7 @@ export default function VideoClasses() {
     const handleMeet = async () => {
         // Open Meet in new tab
         window.open("https://meet.google.com/new", "_blank");
-        
+
         if (selectedClass) {
             // Prompt user to paste the meeting link
             const meetLink = prompt(
@@ -169,7 +169,7 @@ export default function VideoClasses() {
                 "Or click Cancel to add it manually later.",
                 ""
             );
-            
+
             if (meetLink && meetLink.trim()) {
                 // Update the course with the Meet link
                 try {
@@ -202,7 +202,7 @@ export default function VideoClasses() {
                     })).unwrap();
 
                     alert("✅ Google Meet link saved successfully!");
-                    
+
                     // Refresh courses
                     dispatch(fetchCourses({ page: 1, limit: 100 }));
                 } catch (err) {
@@ -214,7 +214,7 @@ export default function VideoClasses() {
             // No class selected - just open Meet
             alert("Google Meet opened in a new tab. Copy the meeting link and add it to a course lesson in the course edit page.");
         }
-        
+
         setShowStartClassModal(false);
     };
 
@@ -321,13 +321,12 @@ export default function VideoClasses() {
                     {sortedLiveClasses.map((lc) => (
                         <div
                             key={lc.id}
-                            className={`card border-2 shadow-sm ${
-                                lc.isUpcoming
+                            className={`card border-2 shadow-sm ${lc.isUpcoming
                                     ? "bg-info/10 border-info"
                                     : lc.isPast
-                                    ? "bg-base-200 border-base-300"
-                                    : "bg-base-100 border-base-300"
-                            }`}
+                                        ? "bg-base-200 border-base-300"
+                                        : "bg-base-100 border-base-300"
+                                }`}
                         >
                             <div className="card-body p-4 sm:p-6">
                                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
