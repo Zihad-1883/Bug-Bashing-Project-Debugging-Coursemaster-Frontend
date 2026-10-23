@@ -288,12 +288,20 @@ function AssignmentSubmission({ courseId, lessonId, prompt, enrollment, onComple
     const [previousSubmission, setPreviousSubmission] = useState(null);
     const [loadingPrevious, setLoadingPrevious] = useState(true);
 
-    // Check for previous submission on mount
+    // Check for previous submission on mount and lesson change
     useEffect(() => {
+        setLoadingPrevious(true);
+        setPreviousSubmission(null);
+        setSubmitted(false);
+        setError(null);
+        setAnswer("");
+
+        let isMounted = true;
         const checkPreviousSubmission = async () => {
             try {
                 const { getMyAssignments } = await import("../../services/assignment.api");
                 const response = await getMyAssignments(courseId);
+                if (!isMounted) return;
                 const submissions = response.data || [];
                 const previous = submissions.find(
                     (sub) => String(sub.lessonId) === String(lessonId)
@@ -301,14 +309,22 @@ function AssignmentSubmission({ courseId, lessonId, prompt, enrollment, onComple
                 if (previous) {
                     setPreviousSubmission(previous);
                     setSubmitted(true);
+                } else {
+                    setPreviousSubmission(null);
+                    setSubmitted(false);
                 }
             } catch (err) {
                 console.error("Failed to fetch previous submission:", err);
             } finally {
-                setLoadingPrevious(false);
+                if (isMounted) {
+                    setLoadingPrevious(false);
+                }
             }
         };
         checkPreviousSubmission();
+        return () => {
+            isMounted = false;
+        };
     }, [courseId, lessonId]);
 
     const handleSubmit = async (e) => {
@@ -513,12 +529,20 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
     const [previousSubmission, setPreviousSubmission] = useState(null);
     const [loadingPrevious, setLoadingPrevious] = useState(true);
 
-    // Check for previous submission on mount
+    // Check for previous submission on mount and lesson change
     useEffect(() => {
+        setLoadingPrevious(true);
+        setPreviousSubmission(null);
+        setAnswers({});
+        setScore(0);
+        setError(null);
+
+        let isMounted = true;
         const checkPreviousSubmission = async () => {
             try {
                 const { getMyQuizSubmissions } = await import("../../services/quiz.api");
                 const response = await getMyQuizSubmissions(courseId);
+                if (!isMounted) return;
                 const submissions = response.data || [];
 
                 // Find submission for this specific lesson (get the most recent one)
@@ -548,15 +572,24 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                         });
                         setAnswers(answersObj);
                     }
+                } else {
+                    setPreviousSubmission(null);
+                    setAnswers({});
+                    setScore(0);
                 }
             } catch (err) {
                 console.error("Failed to check previous submission:", err);
             } finally {
-                setLoadingPrevious(false);
+                if (isMounted) {
+                    setLoadingPrevious(false);
+                }
             }
         };
 
         checkPreviousSubmission();
+        return () => {
+            isMounted = false;
+        };
     }, [courseId, lessonId]);
 
     const handleAnswer = (questionIdx, optionIdx) => {
