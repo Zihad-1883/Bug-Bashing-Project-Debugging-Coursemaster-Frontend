@@ -97,16 +97,61 @@ export default function VideoClasses() {
         openZoom();
         
         if (selectedClass) {
-            // Show instructions
-            alert("Zoom meeting page opened. After creating the meeting, copy the meeting link and paste it in the course edit page.");
-            setShowStartClassModal(false);
-            // Navigate to edit course page
-            window.location.href = `/admin/courses/edit/${selectedClass.courseId}`;
+            // Prompt user to paste the meeting link
+            const zoomLink = prompt(
+                "Zoom meeting page opened in a new tab.\n\n" +
+                "Please:\n" +
+                "1. Copy the meeting link from Zoom\n" +
+                "2. Paste it here\n\n" +
+                "Or click Cancel to add it manually later.",
+                ""
+            );
+            
+            if (zoomLink && zoomLink.trim()) {
+                try {
+                    // Find the course
+                    const course = courses.find(c => c._id === selectedClass.courseId);
+                    if (!course) {
+                        alert("Course not found");
+                        return;
+                    }
+
+                    // Find and update the lesson with the Zoom link
+                    const updatedSyllabus = course.syllabus.map(module => {
+                        const updatedLessons = module.lessons.map(lesson => {
+                            if (lesson._id === selectedClass.id) {
+                                return {
+                                    ...lesson,
+                                    liveClassLink: zoomLink.trim(),
+                                    liveClassDate: new Date().toISOString()
+                                };
+                            }
+                            return lesson;
+                        });
+                        return { ...module, lessons: updatedLessons };
+                    });
+
+                    // Update course
+                    await dispatch(updateCourseAsync({
+                        id: selectedClass.courseId,
+                        data: { syllabus: updatedSyllabus }
+                    })).unwrap();
+
+                    alert("✅ Zoom meeting link saved successfully!");
+                    
+                    // Refresh courses
+                    dispatch(fetchCourses({ page: 1, limit: 100 }));
+                } catch (err) {
+                    alert("Failed to save Zoom link. Please add it manually in the course edit page.");
+                    console.error(err);
+                }
+            }
         } else {
             // No class selected - just open Zoom
-            alert("Zoom meeting page opened. After creating the meeting, copy the meeting link and add it to a course lesson in the course edit page.");
-            setShowStartClassModal(false);
+            alert("Zoom meeting page opened in a new tab. Copy the meeting link and add it to a course lesson in the course edit page.");
         }
+        
+        setShowStartClassModal(false);
     };
 
     // Handle Meet option - generate instant meeting
