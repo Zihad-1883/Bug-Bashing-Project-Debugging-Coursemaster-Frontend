@@ -41,7 +41,7 @@ export default function CourseDetails() {
         if (!user && token) {
             try {
                 await dispatch(getMeAsync()).unwrap();
-            } catch (err) {
+            } catch {
                 // ignore, will redirect to login below
             }
         }
@@ -108,13 +108,12 @@ export default function CourseDetails() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mt-4 sm:mt-6">
-                        <p className="text-2xl sm:text-3xl font-bold" style={{ 
+                        <p className="text-2xl sm:text-3xl font-bold" style={{
                             background: 'linear-gradient(135deg, #78A083, #50727B)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
-                        }}>৳ {course.price * 100}</p>
-
+                        }}>৳ {course.price}</p>
                         <div>
                             {isAdmin ? (
                                 <Link
@@ -285,7 +284,7 @@ export default function CourseDetails() {
                                 );
                             })}
                         </div>
-                        {selectedBatchId && (
+                        {selectedBatchId !== null && selectedBatchId !== undefined && (  // fixed: was null check only
                             <div className="mt-3 text-sm text-primary">
                                 ✓ Batch selected for enrollment
                             </div>
